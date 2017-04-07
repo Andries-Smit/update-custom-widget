@@ -1,0 +1,29 @@
+{
+  "name": "update-custom-widget",
+  "version": "0.1.0",
+  "description": "Experimental! Update Mendix Custom widget, widgetId",
+  "scripts": {
+    "start": "tsc && node dist/updateCustomWidgets.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andries-smit/update-custom-widget.git"
+  },
+  "author": "Andries Smit",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "mendixmodelcomponents": "^2.0.0",
+    "mendixmodelsdk": "^3.2.0",
+    "mendixplatformsdk": "^2.0.0",
+    "mobservable": "^1.0.8",
+    "when": "^3.7.8"
+  },
+  "devDependencies": {
+    "@types/when": "^2.4.28",
+    "tsd": "0.6.5",
+    "tslint": "^4.5.1",
+    "tslint-eslint-rules": "^3.3.0",
+    "typescript": "^2.2.1"
+  }
+}
