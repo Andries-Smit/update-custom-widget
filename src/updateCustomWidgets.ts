@@ -1,20 +1,41 @@
-import { Branch, MendixSdkClient, OnlineWorkingCopy, Project, Revision } from "mendixplatformsdk";
-import { customwidgets, pages } from "mendixmodelsdk";
-import when = require("when");
+// import { Branch, MendixSdkClient, OnlineWorkingCopy, Project, Revision } from "mendixplatformsdk";
+// import { customwidgets, pages } from "mendixmodelsdk";
+// import when = require("when");
+import * as path from "path";
+import * as fs from "fs";
 
 // ---------------------------------------------------- //
 // SETTINGS                                             //
 // ---------------------------------------------------- //
-const username = "name@company.com";
-const apikey = "xxxxxx-xxx-xxxx-xxxx-xxxxxx";
-const projectId = "xxxxxx-xxx-xxxx-xxxx-xxxxxx";
-const projectName = "MyAwesomeProject";
-const revNo = -1; // -1 for latest
-const branchName = null; // null for mainline
-const originalWidgetId = "OldWidget.widget.OldWidget";
-const newWidgetId = "NewWidget.widget.NewWidget";
+const settingsFile = path.resolve(`${__dirname}/..`, "localSettings.js");
+type Settings = {
+    username: string;
+    apikey: string;
+    projectId: string;
+    projectName: string;
+    originalWidgetId: string;
+    newWidgetId: string;
+    revNo?: number;
+    branchName?: string; // null for mainline
+    dryRun?: boolean // can run without committing
+};
 
-const dryRun = false; // can run without committing
+if (fs.existsSync(settingsFile)) {
+    console.log("Running with local settings from " + settingsFile);
+} else {
+    console.log("Copy localSettings.example.js and rename as localSettings.js. Fill in the place holders!!!");
+}
+const settings: Settings = require(settingsFile).settings as Settings;
+
+const defaultSettings = {
+    revNo: -1, // -1 for latest
+    branchName: "", // null for mainline
+    dryRun: false // can run without committing
+};
+console.log(Object.assign({}, defaultSettings, settings));
+
+const {  username, apikey, projectId, projectName, originalWidgetId, newWidgetId, revNo, branchName, dryRun} = Object.assign({},defaultSettings, settings);
+
 
 // ---------------------------------------------------- //
 
@@ -97,41 +118,41 @@ function loadPage(page: pages.IPage): when.Promise<pages.Page> {
     });
 }
 
-function findCustomWidgetInAllPages(pages: pages.Page[]): when.Promise<customwidgets.ICustomWidget[]> {
+function findCustomWidgetInAllPages(pages: pages.Page[]): when.Promise<customwidgets.CustomWidget[]> {
     console.log("Find all custom widgets");
-    return when.map<customwidgets.ICustomWidget[]>(pages, findCustomWidgets);
+    return when.map<customwidgets.CustomWidget[]>(pages, findCustomWidgets);
 }
 
-function findCustomWidgets(page: pages.Page): when.Promise<customwidgets.ICustomWidget[]> {
-    return when.promise<customwidgets.ICustomWidget[]>((resolve) => {
-        const widgetList: customwidgets.ICustomWidget[] = [];
+function findCustomWidgets(page: pages.Page): when.Promise<customwidgets.CustomWidget[]> {
+    return when.promise<customwidgets.CustomWidget[]>((resolve) => {
+        const widgetList: customwidgets.CustomWidget[] = [];
         page.traverse((structure) => {
-            if (structure instanceof pages.Widget && structure.typeName === "CustomWidgets$CustomWidget") {
-                widgetList.push(structure);
+            if (structure instanceof pages.Widget && structure.structureTypeName === "CustomWidgets$CustomWidget") {
+                widgetList.push(structure as customwidgets.CustomWidget);
             }
         });
         resolve(widgetList);
     });
 }
 
-function loadAllWidgets(pagesWidgets: [customwidgets.ICustomWidget[]]): when.Promise<customwidgets.CustomWidget[]> {
+function loadAllWidgets(pagesWidgets: [customwidgets.CustomWidget[]]): when.Promise<customwidgets.CustomWidget[]> {
     console.log("Load all custom widgets");
-    let widgetList: customwidgets.ICustomWidget[] = [];
+    let widgetList: customwidgets.CustomWidget[] = [];
     pagesWidgets.forEach((widgets) => {
         widgetList = widgetList.concat(widgets);
     });
     return when.map<customwidgets.CustomWidget[]>(widgetList, loadWidget);
 }
 
-function loadWidget(widget: customwidgets.ICustomWidget): when.Promise<customwidgets.CustomWidget> {
+function loadWidget(widget: customwidgets.CustomWidget): when.Promise<customwidgets.CustomWidget> {
     return when.promise<customwidgets.CustomWidget>((resolve, reject) => {
         if (widget) {
             widget.load(widgetInstance => {
                 if (widgetInstance) {
                     resolve(widgetInstance);
                 } else {
-                    console.log(`Failed to load: ${widget.qualifiedName}`);
-                    reject(`Failed to load: ${widget.qualifiedName}`);
+                    console.log(`Failed to load: ${widget.name}`);
+                    reject(`Failed to load: ${widget.name}`);
                 }
             });
         } else {
