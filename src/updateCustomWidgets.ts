@@ -1,6 +1,6 @@
-// import { Branch, MendixSdkClient, OnlineWorkingCopy, Project, Revision } from "mendixplatformsdk";
-// import { customwidgets, pages } from "mendixmodelsdk";
-// import when = require("when");
+import { Branch, MendixSdkClient, OnlineWorkingCopy, Project, Revision } from "mendixplatformsdk";
+import { customwidgets, pages } from "mendixmodelsdk";
+import when = require("when");
 import * as path from "path";
 import * as fs from "fs";
 
