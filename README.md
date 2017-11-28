@@ -18,7 +18,7 @@ No warrantees nor support is provided for this script.
 Set your settings
 * Create a file `localSettings.js` copy contents of `localSettings.example.js` and fillin the placeholders accordingly
 ```
-const settings = {
+exports.settings = {
     username : "your-mendix-user-email@your-domain",
     apikey : "your-mendix-account-api-key",
     projectId : "your-mendix-project-AppId",

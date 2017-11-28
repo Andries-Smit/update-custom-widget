@@ -1,4 +1,4 @@
-const settings = {
+exports.settings = {
     username : "your-mendix-user-email@your-domain",
     apikey : "your-mendix-account-api-key",
     projectId : "your-mendix-project-AppId",
@@ -9,4 +9,3 @@ const settings = {
     // branchName: "", // "" for mainline
     // dryRun: false // can run without committing
 };
-module.exports = settings;
