@@ -14,13 +14,14 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "mendixmodelcomponents": "^2.0.0",
-    "mendixmodelsdk": "^3.2.0",
-    "mendixplatformsdk": "^2.0.0",
+    "mendixmodelsdk": "^4.4.0",
+    "mendixplatformsdk": "^4.0.0",
     "mobservable": "^1.0.8",
     "when": "^3.7.8"
   },
   "devDependencies": {
-    "@types/when": "^2.4.28",
+    "@types/node": "^8.0.32",
+    "@types/when": "^2.4.29",
     "tsd": "0.6.5",
     "tslint": "^4.5.1",
     "tslint-eslint-rules": "^3.3.0",
