@@ -14,8 +14,8 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "mendixmodelcomponents": "^2.0.0",
-    "mendixmodelsdk": "^3.2.0",
-    "mendixplatformsdk": "^2.0.0",
+    "mendixmodelsdk": "^4.14.0",
+    "mendixplatformsdk": "^4.0.0",
     "mobservable": "^1.0.8",
     "when": "^3.7.8"
   },

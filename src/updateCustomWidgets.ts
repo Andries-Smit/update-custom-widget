@@ -60,7 +60,7 @@ function updateWidgets(widgets: customwidgets.CustomWidget[]): when.Promise<cust
     return when.promise<customwidgets.CustomWidget[]> (resolve => {
         const widgetsUpdate: customwidgets.CustomWidget[] = [];
         widgets.forEach(widget => {
-            if (widget.type.widgetId === originalWidgetId) {
+            if (widget.type && widget.type.widgetId === originalWidgetId) {
                 widgetsUpdate.push(widget);
                 matchCount++;
                 if (dryRun) {
@@ -97,41 +97,43 @@ function loadPage(page: pages.IPage): when.Promise<pages.Page> {
     });
 }
 
-function findCustomWidgetInAllPages(pages: pages.Page[]): when.Promise<customwidgets.ICustomWidget[]> {
+function findCustomWidgetInAllPages(pages: pages.Page[]): when.Promise<customwidgets.CustomWidget[]> {
     console.log("Find all custom widgets");
-    return when.map<customwidgets.ICustomWidget[]>(pages, findCustomWidgets);
+    return when.map<customwidgets.CustomWidget[]>(pages, findCustomWidgets);
 }
 
-function findCustomWidgets(page: pages.Page): when.Promise<customwidgets.ICustomWidget[]> {
-    return when.promise<customwidgets.ICustomWidget[]>((resolve) => {
-        const widgetList: customwidgets.ICustomWidget[] = [];
+function findCustomWidgets(page: pages.Page): when.Promise<customwidgets.CustomWidget[]> {
+    return when.promise<customwidgets.CustomWidget[]>((resolve) => {
+        const widgetList: customwidgets.CustomWidget[] = [];
         page.traverse((structure) => {
-            if (structure instanceof pages.Widget && structure.typeName === "CustomWidgets$CustomWidget") {
-                widgetList.push(structure);
+            // console.log(structure);
+            if (structure instanceof pages.Widget && structure.structureTypeName === "CustomWidgets$CustomWidget") {
+                widgetList.push(structure as customwidgets.CustomWidget);
+                // console.log("should have pushed structure", structure );
             }
         });
         resolve(widgetList);
     });
 }
 
-function loadAllWidgets(pagesWidgets: [customwidgets.ICustomWidget[]]): when.Promise<customwidgets.CustomWidget[]> {
+function loadAllWidgets(pagesWidgets: [customwidgets.CustomWidget[]]): when.Promise<customwidgets.CustomWidget[]> {
     console.log("Load all custom widgets");
-    let widgetList: customwidgets.ICustomWidget[] = [];
+    let widgetList: customwidgets.CustomWidget[] = [];
     pagesWidgets.forEach((widgets) => {
         widgetList = widgetList.concat(widgets);
     });
     return when.map<customwidgets.CustomWidget[]>(widgetList, loadWidget);
 }
 
-function loadWidget(widget: customwidgets.ICustomWidget): when.Promise<customwidgets.CustomWidget> {
+function loadWidget(widget: customwidgets.CustomWidget): when.Promise<customwidgets.CustomWidget> {
     return when.promise<customwidgets.CustomWidget>((resolve, reject) => {
         if (widget) {
             widget.load(widgetInstance => {
                 if (widgetInstance) {
                     resolve(widgetInstance);
                 } else {
-                    console.log(`Failed to load: ${widget.qualifiedName}`);
-                    reject(`Failed to load: ${widget.qualifiedName}`);
+                    console.log(`Failed to load: ${widget.name}`);
+                    reject(`Failed to load: ${widget.name}`);
                 }
             });
         } else {
